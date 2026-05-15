@@ -10,6 +10,13 @@ def compress_pdf(input_path: str, quality: str = "/ebook"):
     logging.info(f"Starting PDF compression for: {input_path} with quality: {quality}")
     temp = "temp_compressed.pdf"
     output_path = input_path.replace(".pdf", "_compressed.pdf")
+    files = os.listdir(os.path.dirname(input_path))
+
+    if os.path.basename(output_path) in files:
+        i = 1
+        while os.path.basename(output_path) in files:
+            output_path = input_path.replace(".pdf", f"_compressed_{i}.pdf")
+            i += 1
     
     logging.info("Optimizing with PyMuPDF...")
     doc = fitz.open(input_path)
