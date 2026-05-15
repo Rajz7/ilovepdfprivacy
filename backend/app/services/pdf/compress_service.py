@@ -3,20 +3,19 @@ import subprocess
 import pikepdf
 import os
 import logging
+import uuid
+from pathlib import Path
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def compress_pdf(input_path: str, quality: str = "/ebook"):
     logging.info(f"Starting PDF compression for: {input_path} with quality: {quality}")
     temp = "temp_compressed.pdf"
-    output_path = input_path.replace(".pdf", "_compressed.pdf")
-    files = os.listdir(os.path.dirname(input_path))
 
-    if os.path.basename(output_path) in files:
-        i = 1
-        while os.path.basename(output_path) in files:
-            output_path = input_path.replace(".pdf", f"_compressed_{i}.pdf")
-            i += 1
+    input_path = Path(input_path)
+    output_dir = input_path.parent
+
+    output_path = output_dir / f"{uuid.uuid4().hex}.pdf"
     
     logging.info("Optimizing with PyMuPDF...")
     doc = fitz.open(input_path)
