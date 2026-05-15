@@ -1,39 +1,44 @@
 import subprocess
 from pathlib import Path
+import uuid
 
-# works for .doc and .docx
-def convert_word_to_pdf(input_path):
-    input_path = Path(input_path).resolve()
 
-    output_dir = input_path.parent
+def convert_word_to_pdf(input_file: str, output_dir: str | None = None) -> Path:
+    input_path = Path(input_file).resolve()
 
-    pdf_name = f"{input_path.stem}.pdf"
+    if not input_path.exists():
+        raise FileNotFoundError(input_path)
+
+    output_dir = Path(output_dir).resolve() if output_dir else input_path.parent
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    pdf_name = f"{uuid.uuid4().hex}.pdf"
     output_path = output_dir / pdf_name
-
-    i = 1
-    while output_path.exists():
-        output_path = output_dir / f"{input_path.stem}_{i}.pdf"
-        i += 1
 
     command = [
         "soffice",
         "--headless",
         "--convert-to",
-        "pdf",
-        str(input_path),
+        "pdf:writer_pdf_Export",
         "--outdir",
-        str(output_dir)
+        str(output_dir),
+        str(input_path),
     ]
 
-    subprocess.run(command, check=True)
+    result = subprocess.run(
+        command,
+        capture_output=True,
+        text=True
+    )
+
+    if result.returncode != 0:
+        raise RuntimeError(result.stderr.strip())
+
     generated_pdf = output_dir / f"{input_path.stem}.pdf"
 
-    if generated_pdf != output_path:
-        generated_pdf.rename(output_path)
+    if not generated_pdf.exists():
+        raise RuntimeError("PDF was not created")
+
+    generated_pdf.rename(output_path)
 
     return output_path
-
-
-pdf = convert_word_to_pdf("/home/lamborghini/Downloads/odtfile.docx")
-
-print("Created:", pdf)
