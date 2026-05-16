@@ -1,7 +1,9 @@
 import subprocess
 from pathlib import Path
 
-def ppt_to_pdf(input_file):
+#excel, ppt 
+
+def file_to_pdf(input_file):
     input_path = Path(input_file)
 
     if not input_path.exists():
@@ -20,5 +22,5 @@ def ppt_to_pdf(input_file):
 
     return output_file
 
-pdf_path = ppt_to_pdf("/home/lamborghini/Downloads/ppt.pptx")
+pdf_path = file_to_pdf("/home/lamborghini/Downloads/ppt.pptx")
 print(f"Created: {pdf_path}")
