@@ -22,5 +22,5 @@ def file_to_pdf(input_file):
 
     return output_file
 
-pdf_path = file_to_pdf("/home/lamborghini/Downloads/ppt.pptx")
+pdf_path = file_to_pdf("/home/lamborghini/Downloads/excel.xlsx")
 print(f"Created: {pdf_path}")
