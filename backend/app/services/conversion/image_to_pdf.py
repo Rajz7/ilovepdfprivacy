@@ -1,22 +1,23 @@
 import img2pdf
-from PIL import Image
 import os
 import uuid
+from typing import List
 
-def convert_image_to_pdf(image_path):
-    image = Image.open(image_path)
-    pdf_path = image_path[:image_path.rfind('.')]
-    pdf_path += os.path.join(f"{uuid.uuid4()}.pdf")
+def convert_images_to_pdf(image_paths: List[str], output_dir: str) -> str:
+    """
+    Converts one or more images to a single PDF file.
 
-    pdf_bytes = img2pdf.convert(image.filename)
+    Args:
+        image_paths (List[str]): A list of paths to the input image files.
+        output_dir (str): The directory to save the output PDF file.
 
-    file = open(pdf_path, "wb")
+    Returns:
+        str: The path to the generated PDF file.
+    """
+    pdf_filename = f"{uuid.uuid4().hex}.pdf"
+    pdf_path = os.path.join(output_dir, pdf_filename)
 
-    file.write(pdf_bytes)
+    with open(pdf_path, "wb") as f:
+        f.write(img2pdf.convert(image_paths))
 
-    image.close()
-
-    file.close()
-
-    print(f"Successfully made pdf file: {pdf_path}")
     return pdf_path
