@@ -2,6 +2,51 @@ import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { mergePdf, splitPdf, compressPdf, imageToPdf, wordToPdf, pptToPdf } from '../api/pdf';
 
+const TOOL_DEFAULT_FILENAMES = {
+  'merge-pdf': 'merged.pdf',
+  'split-pdf': 'split_files.zip',
+  'compress-pdf': 'compressed.pdf',
+  'image-to-pdf': 'converted.pdf',
+  'word-to-pdf': 'converted.pdf',
+  'powerpoint-to-pdf': 'converted.pdf',
+};
+
+const CONTENT_TYPE_EXTENSIONS = {
+  'application/pdf': '.pdf',
+  'application/zip': '.zip',
+};
+
+const getFilenameFromContentDisposition = (contentDisposition) => {
+  if (!contentDisposition) {
+    return null;
+  }
+
+  const utf8Match = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i);
+  if (utf8Match?.[1]) {
+    return decodeURIComponent(utf8Match[1].trim().replace(/"/g, ''));
+  }
+
+  const basicMatch = contentDisposition.match(/filename=([^;]+)/i);
+  if (basicMatch?.[1]) {
+    return basicMatch[1].trim().replace(/^"|"$/g, '');
+  }
+
+  return null;
+};
+
+const ensureFilenameExtension = (filename, contentType) => {
+  const extension = CONTENT_TYPE_EXTENSIONS[contentType];
+  if (!extension) {
+    return filename;
+  }
+
+  if (filename.toLowerCase().endsWith(extension)) {
+    return filename;
+  }
+
+  return `${filename}${extension}`;
+};
+
 const ToolPage = () => {
   const { toolName } = useParams();
   const [files, setFiles] = useState([]);
@@ -43,17 +88,15 @@ const ToolPage = () => {
           throw new Error('Invalid tool');
       }
 
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const blob = response.data;
+      const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       const contentDisposition = response.headers['content-disposition'];
-      let filename = 'download';
-      if (contentDisposition) {
-        const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);
-        if (filenameMatch && filenameMatch.length === 2) {
-          filename = filenameMatch[1];
-        }
-      }
+      const contentType = response.headers['content-type'];
+      const fallbackFilename = TOOL_DEFAULT_FILENAMES[toolName] || 'download';
+      const extractedFilename = getFilenameFromContentDisposition(contentDisposition);
+      const filename = ensureFilenameExtension(extractedFilename || fallbackFilename, contentType);
       link.setAttribute('download', filename);
       document.body.appendChild(link);
       link.click();

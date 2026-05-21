@@ -31,6 +31,9 @@ async def compress_pdf_endpoint(file: UploadFile = File(...), preset: str = "sma
             headers={"Content-Disposition": f"attachment; filename={os.path.basename(output_path)}"}
         )
 
+    except ValueError as e:
+        logging.error(f"Invalid compression preset: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         logging.error(f"Error compressing PDF: {e}")
         raise HTTPException(status_code=500, detail=str(e))

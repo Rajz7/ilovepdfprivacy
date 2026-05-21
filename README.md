@@ -79,7 +79,21 @@ cd frontend
 npm install
 ```
 
-### 3. Start the development server
+### 3. Configure API URL
+
+Create a local environment file in the frontend:
+
+```bash
+cp .env.example .env
+```
+
+Default value:
+
+```text
+VITE_API_BASE_URL=http://127.0.0.1:8000
+```
+
+### 4. Start the development server
 
 ```bash
 npm run dev

@@ -3,12 +3,12 @@ import ToolCard from '../components/ToolCard';
 
 const HomePage = () => {
   const tools = [
-    { title: 'Merge PDF', description: 'Combine multiple PDFs into one.' },
-    { title: 'Split PDF', description: 'Extract pages from a PDF.' },
-    { title: 'Compress PDF', description: 'Reduce the file size of your PDF.' },
-    { title: 'Word to PDF', description: 'Convert Word documents to PDF.' },
-    { title: 'Powerpoint to PDF', description: 'Convert Powerpoint presentations to PDF.' },
-    { title: 'Image to PDF', description: 'Convert images to PDF.' },
+    { title: 'Merge PDF', description: 'Combine multiple PDFs into one.', path: '/tool/merge-pdf' },
+    { title: 'Split PDF', description: 'Extract pages from a PDF.', path: '/tool/split-pdf' },
+    { title: 'Compress PDF', description: 'Reduce the file size of your PDF.', path: '/tool/compress-pdf' },
+    { title: 'Word to PDF', description: 'Convert Word documents to PDF.', path: '/tool/word-to-pdf' },
+    { title: 'Powerpoint to PDF', description: 'Convert Powerpoint presentations to PDF.', path: '/tool/powerpoint-to-pdf' },
+    { title: 'Image to PDF', description: 'Convert images to PDF.', path: '/tool/image-to-pdf' },
   ];
 
   return (
@@ -22,7 +22,7 @@ const HomePage = () => {
       </header>
       <main className="flex flex-wrap justify-center">
         {tools.map((tool) => (
-          <ToolCard key={tool.title} title={tool.title} description={tool.description} />
+          <ToolCard key={tool.title} title={tool.title} description={tool.description} path={tool.path} />
         ))}
       </main>
       <footer className="text-center mt-12">
